@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bpo Change - Translator</title>
+    <!-- Base de Datos en JS -->
+    <!-- <link rel="stylesheet" href="./js/bd/paises.js"> -->
+    <!-- Estilos de Bootstrap -->
+    <link rel="stylesheet" href="https://getbootstrap.com/docs/5.3/assets/css/docs.css">
+    <!-- <link rel="stylesheet" href="./js/bd-tbl-idiomas.js"> -->
+
+    <!-- …or create a new repository on the command line
+    echo "# test-by-js-buscador" >> README.md
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git branch -M main
+    git remote add origin https://github.com/FernandoMGan/test-by-js-buscador.git
+    git push -u origin main
+
+    …or push an existing repository from the command line
+    git remote add origin https://github.com/FernandoMGan/test-by-js-buscador.git
+    git branch -M main
+    git push -u origin main -->
+
+    <style>
+        :root {
+            /* Estilos Universales */
+            /* Especificos de color */
+            --bpo-wa-base-background: #fcf8c6;
+            --bpo-wa-base-menu: white;
+
+            --bpo-wa-border-bloque: gray;
+            --bpo-wa-border-foco-fondo: lightgray;
+            --bpo-wa-border-foco-txt: blue;
+
+            --bpo-wa-box-proyect: orange;
+
+            /* Colores especificos para testeo y ubicacion de cajas */
+            --bpo-wa-test-01: rgb(219, 127, 158);
+            --bpo-wa-test-02: rgb(200, 60, 83);
+            --bpo-wa-test-03: rgb(255, 0, 0);
+            --bpo-wa-test-04: rgb(214, 178, 255);
+            --bpo-wa-test-05: rgb(175, 40, 238);
+            /* Especificos de unidades de medida */
+            --bpo-unit-spacing: 0.25em;
+
+            /* Colores viejos por compatibilidad */
+            --brdColorTitulos: black;
+            --brdColorFondo: white;
+            --brdColorCajas: orange;
+            --brdColorIngresos: blue;
+            --brdColorLeyendas: green;
+            --brdColorLeyendasSuave: lightgreen;
+        }
+
+        body {
+            background-color: var(--bpo-wa-base-background);
+            margin: 0px;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+
+            position: fixed;
+            left: 1%;
+            top: 0;
+
+            background-color: var(--bpo-wa-base-menu);
+
+            padding: 0;
+            /* calc(var(--bpo-unit-spacing) * 0.1) 0; */
+            border: 1px solid var(--bpo-wa-border-bloque);
+
+            top: calc(var(--bpo-unit-spacing) * 0.5);
+            height: calc(var(--bpo-unit-spacing) * 7.5);
+            width: 98%;
+
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav * {
+            /* Estilos que deseas aplicar a los hijos directos de clase "nav" */
+            display: flex;
+            flex-direction: row;
+
+            /* top: calc(var(--bpo-unit-spacing) * 0.5); */
+            height: calc(var(--bpo-unit-spacing) * 3);
+            margin: calc(var(--bpo-unit-spacing) * 0.50) calc(var(--bpo-unit-spacing) * 2) calc(var(--bpo-unit-spacing) * 0.5) calc(var(--bpo-unit-spacing) * 1.5);
+            align-items: center;
+            justify-content: left;
+        }
+
+        .nav .navImg:hover {
+            cursor: pointer;
+        }
+
+        .navBoxSearchKeys {
+            display: flex;
+            flex-direction: row;
+            position: relative;
+
+            border: 1px solid var(--bpo-wa-border-bloque);
+            border-radius: 25px;
+
+            top: calc(var(--bpo-unit-spacing) * 0.50);
+            height: calc(var(--bpo-unit-spacing) * 3);
+            width: 350px;
+            margin: calc(var(--bpo-unit-spacing) * 0.25) calc(var(--bpo-unit-spacing) * 2) calc(var(--bpo-unit-spacing) * 1) calc(var(--bpo-unit-spacing) * 1.5);
+
+            padding: calc(var(--bpo-unit-spacing)*1.5) calc(var(--bpo-unit-spacing)*2);
+            justify-content: space-between;
+        }
+
+        .navBoxSearchKeysImgDiv {
+            border: 1px solid var(--bpo-wa-border-bloque);
+            height: 130%;
+            padding: 0;
+            margin: calc(var(--bpo-unit-spacing) * -0.75) calc(var(--bpo-unit-spacing) * 1) -2px calc(var(--bpo-unit-spacing) * 0.5);
+        }
+
+        .navBoxSearchKeysImg>.navImg {
+            position: relative;
+            top: calc(var(--bpo-unit-spacing) * 0.25);
+            margin-right: calc(var(--bpo-unit-spacing) * 0);
+        }
+
+        .proyect-title {
+            display: flex;
+            position: fixed;
+            border: 1px solid var(--bpo-wa-box-proyect);
+            border-radius: calc(var(--bpo-unit-spacing) * 2);
+
+            font-size: smaller;
+            text-align: center;
+
+            top: calc((var(--bpo-unit-spacing) * 4) + (var(--bpo-unit-spacing)* 6.5));
+            height: calc(var(--bpo-unit-spacing) * 2);
+            width: 97%;
+            margin: calc(var(--bpo-unit-spacing) * 1) calc(var(--bpo-unit-spacing) * 3) calc(var(--bpo-unit-spacing) * 1) calc(var(--bpo-unit-spacing) * 3);
+
+            padding: calc(var(--bpo-unit-spacing)*2);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cntd-gral {
+            display: flex;
+            flex-direction: row;
+
+            position: relative;
+
+            background-color: var(--bpo-wa-test-01);
+            border: 1px solid var(--bpo-wa-border-bloque);
+
+            align-items: center;
+
+            left: 1%;
+            height: auto;
+            width: 98%;
+
+            top: calc((var(--bpo-unit-spacing) * 4.5) + (var(--bpo-unit-spacing)* 2.8));
+        }
+
+        .fr-Botonera {
+            display: flex;
+            flex-direction: column;
+            /* left: 1%; */
+            /* height: 700px; */
+            width: 19%;
+
+            padding: calc((var(--bpo-unit-spacing) * 2)) calc((var(--bpo-unit-spacing) * 2));
+            gap: calc((var(--bpo-unit-spacing) * 0.75));
+
+        }
+
+        .btn {
+            border-radius: var(--bpo-unit-spacing);
+        }
+
+        .btn:hover {
+            cursor: pointer;
+
+            background-color: var(--bpo-wa-border-foco-fondo);
+            color: var(--bpo-wa-border-foco-txt);
+            border: 1px solid var(--bpo-wa-border-foco-txt);
+        }
+
+        .btn:active {
+            background-color: white;
+            color: var(--bpo-wa-border-foco-txt);
+            transform: scale(0.75);
+        }
+
+        .fr-textos {
+            display: flex;
+            flex-direction: row;
+
+            /* left: 2%; */
+            /* height: 700px; */
+            width: 70%;
+
+            padding: calc((var(--bpo-unit-spacing) * 1)) calc((var(--bpo-unit-spacing) * 2));
+            gap: calc((var(--bpo-unit-spacing) * 6));
+
+        }
+
+        .fr-textos h3 {
+            text-align: center;
+            /* top: 1em; */
+        }
+
+        .fr-cntd-tablas {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* Estilos para la tabla */
+        .tblRsltBsq {
+            /* display: flex;
+            flex-direction: column; */
+            left: 10%;
+
+            text-align: center;
+            border-collapse: collapse;
+            width: 90%;
+
+        }
+
+        .table-container {
+            display: flex;
+            justify-content: space-between;
+
+
+            gap: 1em;
+        }
+
+        .table-section {
+            flex: 1;
+            border: 1px solid #000;
+            padding: 10px;
+
+            margin: 1%;
+        }
+
+        .tblRsltBsq th {
+            border: 1px solid black;
+            /* Borde solo en las celdas de la cabecera */
+            padding: 8px;
+            background-color: lightgray;
+            /* Fondo de cabecera en gris */
+            font-weight: bold;
+            /* Títulos en negrita */
+        }
+
+        .tblRsltBsq td {
+            padding: 8px;
+        }
+
+        .tblRsltBsq tbody tr:nth-child(odd) {
+            background-color: lightgreen;
+            /* Fondo verde suave para filas pares */
+        }
+
+        /* Ajuste de propiedades por id */
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <div class="navBoxBrand">
+            <img class="navImg" id="" src="./assets/buttons-svg/list.svg" alt="Menu Hamburguesa">
+            <img class="navImg" id="" src="./assets/logos/logoCombinado.png" alt="Logo Combinado">
+            Bpo Change - Video Player
+        </div>
+        <div class="navBoxSearch">
+            <div class="navBoxSearchKeys">
+                <div class="navBoxSearchKeysSearch">
+                    <form action="" method="get">
+                        <div class="inputTxt">
+                            <input type="text" class="form-control" id="idVideoSearched" name="search"
+                                placeholder="Buscar...">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"
+                                    onclick="event.preventDefault(), fncVideoRun()">Buscar</button>
+                                <!-- C:\Home\Desarrollo\bpo-www\portafolio\bpo-video-player\media\video\JingleSebaBalochi.mpeg -->
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="navBoxSearchKeysImg">
+                    <img class="navImg" id="" src="./assets/buttons-svg/search.svg" alt="Lupa para buscar">
+                    <img class="navImg" id="" src="./assets/buttons-svg/line-vertical.svg" alt="Linea divisoria">
+                    <img class="navImg" id="" src="./assets/buttons-svg/mic-fill.svg" alt="Escribir por Microfono">
+                </div>
+            </div>
+        </div>
+        <div class="navBoxAcount">
+            <img class="navImg" id="" src="./assets/buttons-svg/bell.svg" alt="Campanita de Notificaciones">
+            <img class="navImg" id="" src="./assets/buttons/butLogOff.png" alt="Loguin Off / In de Usuario">
+
+        </div>
+
+    </div>
+    <div class="proyect-title">
+        Testeando Json Works - Reproductor de Video by JS - Devel: Fernando M. Gan
+    </div>
+    <br><br>
+    <div class="box textos">
+    </div>
+    <br><br>
+    <div class="box btns">
+        <div class="cntd-gral">
+            <div class="fr-Botonera">
+                <button class="btn" onclick="fncTraducirTexto('en')">Traducir al Inglés</button>
+                <button class="btn" onclick="fncTraducirTexto('es')">Traducir al Español</button>
+                <button class="btn" onclick="fncTraducirTexto('fr')">Traducir al Francés</button>
+                <button class="btn" onclick="fncTraducirTexto('de')">Traducir al Alemán</button>
+                <button class="btn" onclick="fncTraducirTexto('it')">Traducir al Italiano</button>
+                <button class="btn" onclick="fncTraducirTexto('pt')">Traducir al Portugués</button>
+                <button class="btn" onclick="fncTraducirTexto('ja')">Traducir al Japones</button>
+                <button class="btn" onclick="fncTraducirTexto('zh')">Traducir al Chino</button>
+                <button class="btn" onclick="fncTraducirTexto(fncSetIdioma())">Traducir a Idioma Seg Codigo</button>
+            </div>
+            <div class="fr-textos">
+                <div class="txtTextOri">
+                    <h3>Texto Original</h3>
+                    <!-- <label for="txtTranscripOriginal">Texto Original</label> -->
+                    <textarea id="txtTranscripOriginal" rows="10" cols="60"></textarea>
+                </div>
+                <div class="txtTextTrad">
+                    <h3 id="txtTraducAl">Traducido al .. </h3>
+                    <!-- <label for="txtTranscripTraducido">Texto Traducido</label> -->
+                    <textarea id="txtTranscripTraducido" rows="10" cols="60" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="fr-cntd-tablas">
+        <div class="table-container">
+            <table class="tblRsltBsq" id="idTblRsltBsqAF">
+                <thead>
+                    <tr>
+                        <th colspan="3">
+                            <h3 id="roman">Tabla de codigos de idiomas de Google Translate desde A y F</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Idioma</th>
+                        <th>Código ISO-639</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí coloca las filas correspondientes a las letras de A a F -->
+                    <tr>
+                        <td>1</td>
+                        <td>Afrikáans</td>
+                        <td>af</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Aimara</td>
+                        <td>ay</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Albanés</td>
+                        <td>sq</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Alemán</td>
+                        <td>de</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Amárico</td>
+                        <td>am</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Árabe</td>
+                        <td>ar</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Armenio</td>
+                        <td>hy</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Asamés</td>
+                        <td>as</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Azerbaiyano</td>
+                        <td>az</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Bambara</td>
+                        <td>bm</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Bengalí</td>
+                        <td>bn</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>Bhospuri</td>
+                        <td>bho</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>Bielorruso</td>
+                        <td>be</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>Birmano</td>
+                        <td>my</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>Bosnio</td>
+                        <td>bs</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>Búlgaro</td>
+                        <td>bg</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td>Canarés</td>
+                        <td>kn</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>Catalán</td>
+                        <td>ca</td>
+                    </tr>
+                    <tr>
+                        <td>19</td>
+                        <td>Cebuano</td>
+                        <td>ceb</td>
+                    </tr>
+                    <tr>
+                        <td>20</td>
+                        <td>Checo</td>
+                        <td>cs</td>
+                    </tr>
+                    <tr>
+                        <td>21</td>
+                        <td>Chino (simplificado)</td>
+                        <td>zh-CN o zh (BCP-47)</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>Chino (tradicional)</td>
+                        <td>zh-TW (BCP-47)</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>Cingalés</td>
+                        <td>si</td>
+                    </tr>
+                    <tr>
+                        <td>24</td>
+                        <td>Corean</td>
+                        <td>ko</td>
+                    </tr>
+                    <tr>
+                        <td>25</td>
+                        <td>Corso</td>
+                        <td>co</td>
+                    </tr>
+                    <tr>
+                        <td>26</td>
+                        <td>Criollo haitiano</td>
+                        <td>ht</td>
+                    </tr>
+                    <tr>
+                        <td>27</td>
+                        <td>Croata</td>
+                        <td>hr</td>
+                    </tr>
+                    <tr>
+                        <td>28</td>
+                        <td>Curdo</td>
+                        <td>ku</td>
+                    </tr>
+                    <tr>
+                        <td>29</td>
+                        <td>Danés</td>
+                        <td>da</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>Dhivehi</td>
+                        <td>dv</td>
+                    </tr>
+                    <tr>
+                        <td>31</td>
+                        <td>Dogri</td>
+                        <td>doi</td>
+                    </tr>
+                    <tr>
+                        <td>32</td>
+                        <td>Eslovaco</td>
+                        <td>sk</td>
+                    </tr>
+                    <tr>
+                        <td>33</td>
+                        <td>Esloveno</td>
+                        <td>sl</td>
+                    </tr>
+                    <tr>
+                        <td>34</td>
+                        <td>Español</td>
+                        <td>es</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>Esperanto</td>
+                        <td>eo</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>Estonio</td>
+                        <td>et</td>
+                    </tr>
+                    <tr>
+                        <td>37</td>
+                        <td>Ewe</td>
+                        <td>ee</td>
+                    </tr>
+                    <tr>
+                        <td>38</td>
+                        <td>Filipino (tagalo)</td>
+                        <td>fil</td>
+                    </tr>
+                    <tr>
+                        <td>39</td>
+                        <td>Finés</td>
+                        <td>fi</td>
+                    </tr>
+                    <tr>
+                        <td>40</td>
+                        <td>Francés</td>
+                        <td>fr</td>
+                    </tr>
+                    <tr>
+                        <td>41</td>
+                        <td>Frisón</td>
+                        <td>fy</td>
+                    </tr>
+                    <tr>
+                        <td>42</td>
+                        <td>Gaélico esc</td>
+                        <td>gd</td>
+                    </tr>
+                    <tr>
+                        <td>43</td>
+                        <td>Galés</td>
+                        <td>cy</td>
+                    </tr>
+                    <tr>
+                        <td>44</td>
+                        <td>Gallego</td>
+                        <td>gl</td>
+                    </tr>
+                    <tr>
+                        <td>45</td>
+                        <td>Georgiano</td>
+                        <td>ka</td>
+                    </tr>
+                    <tr>
+                        <td>46</td>
+                        <td>Grieg</td>
+                        <td>el</td>
+                    </tr>
+                    <tr>
+                        <td>47</td>
+                        <td>Guaraní</td>
+                        <td>gn</td>
+                    </tr>
+                    <tr>
+                        <td>48</td>
+                        <td>Guyaratí</td>
+                        <td>gu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-container">
+            <table class="tblRsltBsq" id="idTblRsltBsqGO">
+                <thead>
+                    <tr>
+                        <th colspan="3">
+                            <h3 id="roman">Tabla de codigos de idiomas de Google Translate desde G y O</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Idioma</th>
+                        <th>Código ISO-639</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí coloca las filas correspondientes a las letras de H a R -->
+                    <tr>
+                        <td>49</td>
+                        <td>Hausa</td>
+                        <td>ha</td>
+                    </tr>
+                    <tr>
+                        <td>50</td>
+                        <td>Hawaiano</td>
+                        <td>haw</td>
+                    </tr>
+                    <tr>
+                        <td>51</td>
+                        <td>Hebreo</td>
+                        <td>he o iw</td>
+                    </tr>
+                    <tr>
+                        <td>52</td>
+                        <td>Hindi</td>
+                        <td>hi</td>
+                    </tr>
+                    <tr>
+                        <td>53</td>
+                        <td>Hmong</td>
+                        <td>hmn</td>
+                    </tr>
+                    <tr>
+                        <td>54</td>
+                        <td>Holandés</td>
+                        <td>nl</td>
+                    </tr>
+                    <tr>
+                        <td>55</td>
+                        <td>Húngaro</td>
+                        <td>hu</td>
+                    </tr>
+                    <tr>
+                        <td>56</td>
+                        <td>Igbo</td>
+                        <td>ig</td>
+                    </tr>
+                    <tr>
+                        <td>57</td>
+                        <td>Ilocano</td>
+                        <td>ilo</td>
+                    </tr>
+                    <tr>
+                        <td>58</td>
+                        <td>Indonesio</td>
+                        <td>id</td>
+                    </tr>
+                    <tr>
+                        <td>59</td>
+                        <td>Inglés</td>
+                        <td>en</td>
+                    </tr>
+                    <tr>
+                        <td>60</td>
+                        <td>Irlandés</td>
+                        <td>ga</td>
+                    </tr>
+                    <tr>
+                        <td>61</td>
+                        <td>Islandés</td>
+                        <td>is</td>
+                    </tr>
+                    <tr>
+                        <td>62</td>
+                        <td>Italiano</td>
+                        <td>it</td>
+                    </tr>
+                    <tr>
+                        <td>63</td>
+                        <td>Japonés</td>
+                        <td>ja</td>
+                    </tr>
+                    <tr>
+                        <td>64</td>
+                        <td>Javanés</td>
+                        <td>jv o jw</td>
+                    </tr>
+                    <tr>
+                        <td>65</td>
+                        <td>Jemer</td>
+                        <td>km</td>
+                    </tr>
+                    <tr>
+                        <td>66</td>
+                        <td>Kazajo</td>
+                        <td>kk</td>
+                    </tr>
+                    <tr>
+                        <td>67</td>
+                        <td>Kiñaruanda</td>
+                        <td>rw</td>
+                    </tr>
+                    <tr>
+                        <td>68</td>
+                        <td>Kirg</td>
+                        <td>ky</td>
+                    </tr>
+                    <tr>
+                        <td>69</td>
+                        <td>Konkani</td>
+                        <td>gom</td>
+                    </tr>
+                    <tr>
+                        <td>70</td>
+                        <td>Krio</td>
+                        <td>kri</td>
+                    </tr>
+                    <tr>
+                        <td>71</td>
+                        <td>Kurdo (Sorani)</td>
+                        <td>ckb</td>
+                    </tr>
+                    <tr>
+                        <td>72</td>
+                        <td>Laosiano</td>
+                        <td>lo</td>
+                    </tr>
+                    <tr>
+                        <td>73</td>
+                        <td>Latín</td>
+                        <td>la</td>
+                    </tr>
+                    <tr>
+                        <td>74</td>
+                        <td>Letón</td>
+                        <td>lv</td>
+                    </tr>
+                    <tr>
+                        <td>75</td>
+                        <td>Lingala</td>
+                        <td>ln</td>
+                    </tr>
+                    <tr>
+                        <td>76</td>
+                        <td>Lituano</td>
+                        <td>lt</td>
+                    </tr>
+                    <tr>
+                        <td>77</td>
+                        <td>Luganda</td>
+                        <td>lg</td>
+                    </tr>
+                    <tr>
+                        <td>78</td>
+                        <td>Luxemburgués</td>
+                        <td>lb</td>
+                    </tr>
+                    <tr>
+                        <td>79</td>
+                        <td>Macedonio</td>
+                        <td>mk</td>
+                    </tr>
+                    <tr>
+                        <td>80</td>
+                        <td>Maithili</td>
+                        <td>mai</td>
+                    </tr>
+                    <tr>
+                        <td>81</td>
+                        <td>Malabar</td>
+                        <td>ml</td>
+                    </tr>
+                    <tr>
+                        <td>82</td>
+                        <td>Malayo</td>
+                        <td>ms</td>
+                    </tr>
+                    <tr>
+                        <td>83</td>
+                        <td>Malgache</td>
+                        <td>mg</td>
+                    </tr>
+                    <tr>
+                        <td>84</td>
+                        <td>Maltés</td>
+                        <td>mt</td>
+                    </tr>
+                    <tr>
+                        <td>85</td>
+                        <td>Maorí</td>
+                        <td>mi</td>
+                    </tr>
+                    <tr>
+                        <td>86</td>
+                        <td>Marathi</td>
+                        <td>mr</td>
+                    </tr>
+                    <tr>
+                        <td>87</td>
+                        <td>Meiteilon (manipuri)</td>
+                        <td>mni-Mtei</td>
+                    </tr>
+                    <tr>
+                        <td>88</td>
+                        <td>Mizo</td>
+                        <td>lus</td>
+                    </tr>
+                    <tr>
+                        <td>89</td>
+                        <td>Mongol</td>
+                        <td>mn</td>
+                    </tr>
+                    <tr>
+                        <td>90</td>
+                        <td>Nepalí</td>
+                        <td>ne</td>
+                    </tr>
+                    <tr>
+                        <td>91</td>
+                        <td>Noruego</td>
+                        <td>no</td>
+                    </tr>
+                    <tr>
+                        <td>92</td>
+                        <td>Nyanja (chichewa)</td>
+                        <td>ny</td>
+                    </tr>
+                    <tr>
+                        <td>93</td>
+                        <td>Odia (oriya)</td>
+                        <td>or</td>
+                    </tr>
+                    <tr>
+                        <td>94</td>
+                        <td>Oromo</td>
+                        <td>om</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-container">
+            <table class="tblRsltBsq" id="idTblRsltBsqPZ">
+                <thead>
+                    <tr>
+                        <th colspan="3">
+                            <h3 id="roman">Tabla de codigos de idiomas de Google Translate desde P y Z</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Idioma</th>
+                        <th>Código ISO-639</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí coloca las filas correspondientes a las letras de A a F -->
+                    <tr>
+                        <td>95</td>
+                        <td>Pashto</td>
+                        <td>ps</td>
+                    </tr>
+                    <tr>
+                        <td>96</td>
+                        <td>Persa</td>
+                        <td>fa</td>
+                    </tr>
+                    <tr>
+                        <td>97</td>
+                        <td>Polaco</td>
+                        <td>pl</td>
+                    </tr>
+                    <tr>
+                        <td>98</td>
+                        <td>Portugués (Portugal y Brasil)</td>
+                        <td>pt</td>
+                    </tr>
+                    <tr>
+                        <td>99</td>
+                        <td>Punjabi</td>
+                        <td>pa</td>
+                    </tr>
+                    <tr>
+                        <td>100</td>
+                        <td>Quechua</td>
+                        <td>qu</td>
+                    </tr>
+                    <tr>
+                        <td>101</td>
+                        <td>Rumano</td>
+                        <td>ro</td>
+                    </tr>
+                    <tr>
+                        <td>102</td>
+                        <td>Ruso</td>
+                        <td>ru</td>
+                    </tr>
+                    <tr>
+                        <td>103</td>
+                        <td>Samoano</td>
+                        <td>sm</td>
+                    </tr>
+                    <tr>
+                        <td>104</td>
+                        <td>Sánscr</td>
+                        <td>sa</td>
+                    </tr>
+                    <tr>
+                        <td>105</td>
+                        <td>Sepedi</td>
+                        <td>nso</td>
+                    </tr>
+                    <tr>
+                        <td>106</td>
+                        <td>Serbio</td>
+                        <td>sr</td>
+                    </tr>
+                    <tr>
+                        <td>107</td>
+                        <td>Sesoto</td>
+                        <td>st</td>
+                    </tr>
+                    <tr>
+                        <td>108</td>
+                        <td>Shona</td>
+                        <td>sn</td>
+                    </tr>
+                    <tr>
+                        <td>109</td>
+                        <td>Sindhi</td>
+                        <td>sd</td>
+                    </tr>
+                    <tr>
+                        <td>110</td>
+                        <td>Somalí</td>
+                        <td>so</td>
+                    </tr>
+                    <tr>
+                        <td>111</td>
+                        <td>Suajili</td>
+                        <td>sw</td>
+                    </tr>
+                    <tr>
+                        <td>112</td>
+                        <td>Sueco</td>
+                        <td>sv</td>
+                    </tr>
+                    <tr>
+                        <td>113</td>
+                        <td>Sundanés</td>
+                        <td>su</td>
+                    </tr>
+                    <tr>
+                        <td>114</td>
+                        <td>Tagalo (filipino)</td>
+                        <td>tl</td>
+                    </tr>
+                    <tr>
+                        <td>115</td>
+                        <td>Tailandés</td>
+                        <td>th</td>
+                    </tr>
+                    <tr>
+                        <td>116</td>
+                        <td>Tamil</td>
+                        <td>ta</td>
+                    </tr>
+                    <tr>
+                        <td>117</td>
+                        <td>Tártaro</td>
+                        <td>tt</td>
+                    </tr>
+                    <tr>
+                        <td>118</td>
+                        <td>Tayiko</td>
+                        <td>tg</td>
+                    </tr>
+                    <tr>
+                        <td>119</td>
+                        <td>Telugú</td>
+                        <td>te</td>
+                    </tr>
+                    <tr>
+                        <td>120</td>
+                        <td>Tigriña</td>
+                        <td>ti</td>
+                    </tr>
+                    <tr>
+                        <td>121</td>
+                        <td>Tsonga</td>
+                        <td>ts</td>
+                    </tr>
+                    <tr>
+                        <td>122</td>
+                        <td>Turco</td>
+                        <td>tr</td>
+                    </tr>
+                    <tr>
+                        <td>123</td>
+                        <td>Turcom</td>
+                        <td>tk</td>
+                    </tr>
+                    <tr>
+                        <td>124</td>
+                        <td>Twi (Akan)</td>
+                        <td>ak</td>
+                    </tr>
+                    <tr>
+                        <td>125</td>
+                        <td>Ucraniano</td>
+                        <td>uk</td>
+                    </tr>
+                    <tr>
+                        <td>126</td>
+                        <td>Uigur</td>
+                        <td>ug</td>
+                    </tr>
+                    <tr>
+                        <td>127</td>
+                        <td>Urdu</td>
+                        <td>ur</td>
+                    </tr>
+                    <tr>
+                        <td>128</td>
+                        <td>Uzbeko</td>
+                        <td>uz</td>
+                    </tr>
+                    <tr>
+                        <td>129</td>
+                        <td>Vasco</td>
+                        <td>eu</td>
+                    </tr>
+                    <tr>
+                        <td>130</td>
+                        <td>Vietnamita</td>
+                        <td>vi</td>
+                    </tr>
+                    <tr>
+                        <td>131</td>
+                        <td>Xhosa</td>
+                        <td>xh</td>
+                    </tr>
+                    <tr>
+                        <td>132</td>
+                        <td>Yiddish</td>
+                        <td>yi</td>
+                    </tr>
+                    <tr>
+                        <td>133</td>
+                        <td>Yoruba</td>
+                        <td>yo</td>
+                    </tr>
+                    <tr>
+                        <td>134</td>
+                        <td>Zulú</td>
+                        <td>zu</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- <div class="playerVideo"></div>
+                 <br><br><br><br><br><br><br><br><br><br><br><br><br> -->
+    <script>
+        let vBpoVdevGps = true;
+        let vLstLangTradID = '';
+
+        function fncSetIdioma() {
+            // Devuelve el nombre del idioma seleccionado por el codigo
+            fncDevGps('fncSetIdioma - Solicita el idioma a traducir') // Dev Gps 
+
+            // Blanquea la variable vIdioma que recibe 2 letras, segun el idioma que desea traducir al que quiere traducir
+            vLstLangTradID = prompt('Ingrese las letras del codigo de idioma al que quiere traducir :'); // Solicita idioma
+
+            // fncDevGps('fncSetIdioma - El usuario selecciono el idioma a traducir', vIdioma) // Dev Gps 
+        }
+
+        function fncGetIdioma(pIdioma, pOut) {
+            // Devuelve el nombre del idioma seleccionado por el codigo
+            fncDevGps('fncGetIdioma', pIdioma) // Dev Gps 
+
+            // Analiza el idioma según su código y devuelve el nombre descriptivo
+            let nombreIdioma = 'Código no encontrado';
+
+            if (pOut === 'n') {
+                // Busca el idioma por su código ISO-639 y devuelve su nombre
+                const idiomaEncontrado = vaBdTblIdiomas.find(idioma => idioma.codigoISO639 === pIdioma);
+                if (idiomaEncontrado) {
+                    nombreIdioma = idiomaEncontrado.idioma;
+                }
+            } else if (pOut === '#') {
+                // Busca el idioma por su código ISO-639 y devuelve su ordinal en la tabla
+                const idiomaEncontrado = vaBdTblIdiomas.find(idioma => idioma.codigoISO639 === pIdioma);
+                if (idiomaEncontrado) {
+                    nombreIdioma = idiomaEncontrado.id;
+                }
+            } else {
+                nombreIdioma = 'Parámetro pOut no válido, debe ser "n" o "#"';
+            }
+            return nombreIdioma;
+        }
+
+        function fncTraducirTexto(pLang) {
+            // Esta funcion recibe las letras del codigo de idioma al que hay que traducir 
+            // lo regitra en la caja de texo correspondiente
+            let vCodLng = '';
+            if (pLang == null) {
+                vCodLng = vLstLangTradID;
+            }
+            else {
+                vCodLng = pLang;
+            }
+            fncDevGps('fncTraducirTexto') // Dev Gps 
+
+            const txtTranscripOriginal = document.getElementById("txtTranscripOriginal");
+            const txtTranscripTraducido = document.getElementById("txtTranscripTraducido");
+            const wctxtTraducAl = document.getElementById("txtTraducAl");
+            wctxtTraducAl.innerHTML = "Se ha traducido al " + fncGetIdioma(vCodLng, 'n');
+
+            // Obtener el texto de la caja de texto original
+            const textoOriginal = txtTranscripOriginal.value;
+
+            // Verificar si la caja de texto original está vacía
+            if (textoOriginal.trim() === '') {
+                // Si está vacía, muestra un mensaje de error y detén la ejecución
+                txtTranscripOriginal.value = "Por favor complete este campo con el valor que necesita traducir.";
+                return;
+            }
+
+            let letterIdioma = '';
+            letterIdioma = vCodLng;
+            let pUri = '';
+
+            pUri = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" + letterIdioma + "&dt=t&q=" + encodeURI(textoOriginal)
+
+
+            // Traducir el texto utilizando la API de traducción de Google Translate
+            fetch(pUri)
+                .then(response => response.json())
+                .then(data => {
+                    // El resultado es un arreglo que contiene la traducción
+                    if (data && data.length > 0 && data[0].length > 0) {
+                        // Actualizar la caja de texto de traducción con el resultado
+                        txtTranscripTraducido.value = data[0][0][0];
+                    } else {
+                        txtTranscripTraducido.value = "No se pudo realizar la traducción.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al traducir:", error);
+                    txtTranscripTraducido.value = "Error al realizar la traducción.";
+                });
+        }
+        function fncDevGps(pCoordenadas, pAux) {
+            // Esta funcion se utiliza para funcionar como gps siempre que esta activada la variable de rastreo 
+            if (vBpoVdevGps) {
+                console.log('Usted se encuentra en >: ' + pCoordenadas + ' con un auxiliar de "' + pAux) + ' " .';
+            }
+        }
+        const vaBdTblIdiomas = [
+            { id: 1, idioma: 'Afrikáans', codigoISO639: 'af' },
+            { id: 2, idioma: 'Aimara', codigoISO639: 'ay' },
+            { id: 3, idioma: 'Albanés', codigoISO639: 'sq' },
+            { id: 4, idioma: 'Alemán', codigoISO639: 'de' },
+            { id: 5, idioma: 'Amárico', codigoISO639: 'am' },
+            { id: 6, idioma: 'Árabe', codigoISO639: 'ar' },
+            { id: 7, idioma: 'Armenio', codigoISO639: 'hy' },
+            { id: 8, idioma: 'Asamés', codigoISO639: 'as' },
+            { id: 9, idioma: 'Azerbaiyano', codigoISO639: 'az' },
+            { id: 10, idioma: 'Bambara', codigoISO639: 'bm' },
+            { id: 11, idioma: 'Bengalí', codigoISO639: 'bn' },
+            { id: 12, idioma: 'Bhospuri', codigoISO639: 'bho' },
+            { id: 13, idioma: 'Bielorruso', codigoISO639: 'be' },
+            { id: 14, idioma: 'Birmano', codigoISO639: 'my' },
+            { id: 15, idioma: 'Bosnio', codigoISO639: 'bs' },
+            { id: 16, idioma: 'Búlgaro', codigoISO639: 'bg' },
+            { id: 17, idioma: 'Canarés', codigoISO639: 'kn' },
+            { id: 18, idioma: 'Catalán', codigoISO639: 'ca' },
+            { id: 19, idioma: 'Cebuano', codigoISO639: 'ceb' },
+            { id: 20, idioma: 'Checo', codigoISO639: 'cs' },
+            { id: 21, idioma: 'Chino (simplificado)', codigoISO639: 'zh-CN o zh (BCP-47)' },
+            { id: 22, idioma: 'Chino (tradicional)', codigoISO639: 'zh-TW (BCP-47)' },
+            { id: 23, idioma: 'Cingalés', codigoISO639: 'si' },
+            { id: 24, idioma: 'Corean', codigoISO639: 'ko' },
+            { id: 25, idioma: 'Corso', codigoISO639: 'co' },
+            { id: 26, idioma: 'Criollo haitiano', codigoISO639: 'ht' },
+            { id: 27, idioma: 'Croata', codigoISO639: 'hr' },
+            { id: 28, idioma: 'Curdo', codigoISO639: 'ku' },
+            { id: 29, idioma: 'Danés', codigoISO639: 'da' },
+            { id: 30, idioma: 'Dhivehi', codigoISO639: 'dv' },
+            { id: 31, idioma: 'Dogri', codigoISO639: 'doi' },
+            { id: 32, idioma: 'Eslovaco', codigoISO639: 'sk' },
+            { id: 33, idioma: 'Esloveno', codigoISO639: 'sl' },
+            { id: 34, idioma: 'Español', codigoISO639: 'es' },
+            { id: 35, idioma: 'Esperanto', codigoISO639: 'eo' },
+            { id: 36, idioma: 'Estonio', codigoISO639: 'et' },
+            { id: 37, idioma: 'Ewe', codigoISO639: 'ee' },
+            { id: 38, idioma: 'Filipino (tagalo)', codigoISO639: 'fil' },
+            { id: 39, idioma: 'Finés', codigoISO639: 'fi' },
+            { id: 40, idioma: 'Francés', codigoISO639: 'fr' },
+            { id: 41, idioma: 'Frisón', codigoISO639: 'fy' },
+            { id: 42, idioma: 'Gaélico esc', codigoISO639: 'gd' },
+            { id: 43, idioma: 'Galés', codigoISO639: 'cy' },
+            { id: 44, idioma: 'Gallego', codigoISO639: 'gl' },
+            { id: 45, idioma: 'Georgiano', codigoISO639: 'ka' },
+            { id: 46, idioma: 'Grieg', codigoISO639: 'el' },
+            { id: 47, idioma: 'Guaraní', codigoISO639: 'gn' },
+            { id: 48, idioma: 'Guyaratí', codigoISO639: 'gu' },
+            { id: 49, idioma: 'Hausa', codigoISO639: 'ha' },
+            { id: 50, idioma: 'Hawaiano', codigoISO639: 'haw' },
+            { id: 51, idioma: 'Hebreo', codigoISO639: 'he o iw' },
+            { id: 52, idioma: 'Hindi', codigoISO639: 'hi' },
+            { id: 53, idioma: 'Hmong', codigoISO639: 'hmn' },
+            { id: 54, idioma: 'Holandés', codigoISO639: 'nl' },
+            { id: 55, idioma: 'Húngaro', codigoISO639: 'hu' },
+            { id: 56, idioma: 'Igbo', codigoISO639: 'ig' },
+            { id: 57, idioma: 'Ilocano', codigoISO639: 'ilo' },
+            { id: 58, idioma: 'Indonesio', codigoISO639: 'id' },
+            { id: 59, idioma: 'Inglés', codigoISO639: 'en' },
+            { id: 60, idioma: 'Irlandés', codigoISO639: 'ga' },
+            { id: 61, idioma: 'Islandés', codigoISO639: 'is' },
+            { id: 62, idioma: 'Italiano', codigoISO639: 'it' },
+            { id: 63, idioma: 'Japonés', codigoISO639: 'ja' },
+            { id: 64, idioma: 'Javanés', codigoISO639: 'jv o jw' },
+            { id: 65, idioma: 'Jemer', codigoISO639: 'km' },
+            { id: 66, idioma: 'Kazajo', codigoISO639: 'kk' },
+            { id: 67, idioma: 'Kiñaruanda', codigoISO639: 'rw' },
+            { id: 68, idioma: 'Kirg', codigoISO639: 'ky' },
+            { id: 69, idioma: 'Konkani', codigoISO639: 'gom' },
+            { id: 70, idioma: 'Krio', codigoISO639: 'kri' },
+            { id: 71, idioma: 'Kurdo (Sorani)', codigoISO639: 'ckb' },
+            { id: 72, idioma: 'Laosiano', codigoISO639: 'lo' },
+            { id: 73, idioma: 'Latín', codigoISO639: 'la' },
+            { id: 74, idioma: 'Letón', codigoISO639: 'lv' },
+            { id: 75, idioma: 'Lingala', codigoISO639: 'ln' },
+            { id: 76, idioma: 'Lituano', codigoISO639: 'lt' },
+            { id: 77, idioma: 'Luganda', codigoISO639: 'lg' },
+            { id: 78, idioma: 'Luxemburgués', codigoISO639: 'lb' },
+            { id: 79, idioma: 'Macedonio', codigoISO639: 'mk' },
+            { id: 80, idioma: 'Maithili', codigoISO639: 'mai' },
+            { id: 81, idioma: 'Malabar', codigoISO639: 'ml' },
+            { id: 82, idioma: 'Malayo', codigoISO639: 'ms' },
+            { id: 83, idioma: 'Malgache', codigoISO639: 'mg' },
+            { id: 84, idioma: 'Maltés', codigoISO639: 'mt' },
+            { id: 85, idioma: 'Maorí', codigoISO639: 'mi' },
+            { id: 86, idioma: 'Marathi', codigoISO639: 'mr' },
+            { id: 87, idioma: 'Meiteilon (manipuri)', codigoISO639: 'mni-Mtei' },
+            { id: 88, idioma: 'Mizo', codigoISO639: 'lus' },
+            { id: 89, idioma: 'Mongol', codigoISO639: 'mn' },
+            { id: 90, idioma: 'Nepalí', codigoISO639: 'ne' },
+            { id: 91, idioma: 'Noruego', codigoISO639: 'no' },
+            { id: 92, idioma: 'Nyanja (chichewa)', codigoISO639: 'ny' },
+            { id: 93, idioma: 'Odia (oriya)', codigoISO639: 'or' },
+            { id: 94, idioma: 'Oromo', codigoISO639: 'om' },
+            { id: 95, idioma: 'Pashto', codigoISO639: 'ps' },
+            { id: 96, idioma: 'Persa', codigoISO639: 'fa' },
+            { id: 97, idioma: 'Polaco', codigoISO639: 'pl' },
+            { id: 98, idioma: 'Portugués (Portugal y Brasil)', codigoISO639: 'pt' },
+            { id: 99, idioma: 'Punjabi', codigoISO639: 'pa' },
+            { id: 100, idioma: 'Quechua', codigoISO639: 'qu' },
+            { id: 101, idioma: 'Rumano', codigoISO639: 'ro' },
+            { id: 102, idioma: 'Ruso', codigoISO639: 'ru' },
+            { id: 103, idioma: 'Samoano', codigoISO639: 'sm' },
+            { id: 104, idioma: 'Sánscr', codigoISO639: 'sa' },
+            { id: 105, idioma: 'Sepedi', codigoISO639: 'nso' },
+            { id: 106, idioma: 'Serbio', codigoISO639: 'sr' },
+            { id: 107, idioma: 'Sesoto', codigoISO639: 'st' },
+            { id: 108, idioma: 'Shona', codigoISO639: 'sn' },
+            { id: 109, idioma: 'Sindhi', codigoISO639: 'sd' },
+            { id: 110, idioma: 'Somalí', codigoISO639: 'so' },
+            { id: 111, idioma: 'Suajili', codigoISO639: 'sw' },
+            { id: 112, idioma: 'Sueco', codigoISO639: 'sv' },
+            { id: 113, idioma: 'Sundanés', codigoISO639: 'su' },
+            { id: 114, idioma: 'Tagalo (filipino)', codigoISO639: 'tl' },
+            { id: 115, idioma: 'Tailandés', codigoISO639: 'th' },
+            { id: 116, idioma: 'Tamil', codigoISO639: 'ta' },
+            { id: 117, idioma: 'Tártaro', codigoISO639: 'tt' },
+            { id: 118, idioma: 'Tayiko', codigoISO639: 'tg' },
+            { id: 119, idioma: 'Telugú', codigoISO639: 'te' },
+            { id: 120, idioma: 'Tigriña', codigoISO639: 'ti' },
+            { id: 121, idioma: 'Tsonga', codigoISO639: 'ts' },
+            { id: 122, idioma: 'Turco', codigoISO639: 'tr' },
+            { id: 123, idioma: 'Turcom', codigoISO639: 'tk' },
+            { id: 124, idioma: 'Twi (Akan)', codigoISO639: 'ak' },
+            { id: 125, idioma: 'Ucraniano', codigoISO639: 'uk' },
+            { id: 126, idioma: 'Uigur', codigoISO639: 'ug' },
+            { id: 127, idioma: 'Urdu', codigoISO639: 'ur' },
+            { id: 128, idioma: 'Uzbeko', codigoISO639: 'uz' },
+            { id: 129, idioma: 'Vasco', codigoISO639: 'eu' },
+            { id: 130, idioma: 'Vietnamita', codigoISO639: 'vi' },
+            { id: 131, idioma: 'Xhosa', codigoISO639: 'xh' },
+            { id: 132, idioma: 'Yiddish', codigoISO639: 'yi' },
+            { id: 133, idioma: 'Yoruba', codigoISO639: 'yo' },
+            { id: 134, idioma: 'Zulú', codigoISO639: 'zu' }
+        ];
+    </script>
+</body>
+
+</html>
